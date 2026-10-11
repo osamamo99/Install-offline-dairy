@@ -3,414 +3,1130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Number Grid & Stitch Diary - Offline PWA</title>
+  <title>Number Grid & Stitch Diary - Offline Android App</title>
   <meta name="theme-color" content="#0f172a">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-weight='bold'>S</text></svg>">
-  <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Stitch%20Diary%20Offline%22%2C%22short_name%22%3A%22StitchDiary%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20100%20100'%3E%3Crect%20width%3D'100'%20height%3D'100'%20rx%3D'20'%20fill%3D'%232563eb'%2F%3E%3Ctext%20x%3D'50'%20y%3D'65'%20font-size%3D'50'%20text-anchor%3D'middle'%20fill%3D'white'%20font-weight%3D'bold'%3ES%3C%2Ftext%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%230f172a'/%3E%3Cpath d='M136 180 L256 100 L376 180 L256 260 Z' fill='%232563eb'/%3E%3Cpath d='M136 250 L256 330 L376 250' fill='none' stroke='%2338bdf8' stroke-width='24'/%3E%3Cpath d='M136 320 L256 400 L376 320' fill='none' stroke='%2322c55e' stroke-width='24'/%3E%3C/svg%3E">
+  <link rel="manifest" href="data:application/manifest+json;charset=utf-8,%7B%22name%22%3A%22Stitch%20Diary%20Offline%22%2C%22short_name%22%3A%22StitchDiary%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%3E%3Crect%20width%3D'512'%20height%3D'512'%20rx%3D'100'%20fill%3D'%230f172a'%2F%3E%3Cpath%20d%3D'M136%20180%20L256%20100%20L376%20180%20L256%20260%20Z'%20fill%3D'%232563eb'%2F%3E%3Cpath%20d%3D'M136%20250%20L256%20330%20L376%20250'%20fill%3D'none'%20stroke%3D'%2338bdf8'%20stroke-width%3D'24'%2F%3E%3Cpath%20d%3D'M136%20320%20L256%20400%20L376%20320'%20fill%3D'none'%20stroke%3D'%2322c55e'%20stroke-width%3D'24'%2F%3E%3C%2Fsvg%3E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%7D%5D%7D">
   <style>
     :root {
       --primary: #2563eb;
+      --primary-dark: #1d4ed8;
       --bg: #f8fafc;
-      --card: #ffffff;
+      --card-bg: #ffffff;
       --text: #0f172a;
-      --muted: #64748b;
+      --text-muted: #64748b;
       --border: #e2e8f0;
       --success: #16a34a;
       --danger: #dc2626;
       --warning: #d97706;
-      --radius: 10px;
+      --radius: 12px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); padding-bottom: 50px; }
-    .top-bar { background: #0f172a; color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-    .badge-live { background: #16a34a; color: white; padding: 3px 8px; border-radius: 12px; font-weight: bold; font-size: 11px; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 14px; }
-    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    .flex-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-    .folder-pills { display: flex; gap: 6px; overflow-x: auto; padding: 6px 0; }
-    .f-btn { padding: 6px 12px; border: 1px solid var(--border); background: white; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; white-space: nowrap; }
-    .f-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
-    .grid-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-    .grid-table th { background: #f1f5f9; padding: 10px 8px; border: 1px solid var(--border); text-align: center; }
-    .grid-table td { border: 1px solid var(--border); padding: 4px; text-align: center; }
-    .grid-table input, .grid-table textarea { width: 100%; border: none; padding: 6px 8px; font-size: 14px; font-family: inherit; background: transparent; text-align: center; outline: none; }
-    .grid-table textarea { resize: vertical; min-height: 28px; }
-    .grid-table input:focus, .grid-table textarea:focus { background: #e0f2fe; }
-    .btn { padding: 7px 14px; border-radius: 7px; font-weight: bold; cursor: pointer; border: none; font-size: 13px; transition: 0.15s; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 50px;
+    }
+    .top-banner {
+      background: linear-gradient(135deg, #0f172a, #1e293b, #0c4a6e);
+      color: white;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .badge-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 8px #4ade80;
+      margin-right: 6px;
+    }
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+    header {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .header-left h1 {
+      font-size: 19px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .header-left p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    button {
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 8px 14px;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    button:active { transform: scale(0.97); }
     .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
     .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #15803d; }
     .btn-danger { background: var(--danger); color: white; }
-    .btn-outline { background: white; border: 1px solid var(--border); }
-    .stat-badge { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: bold; }
-    .stat-green { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
-    .danger-box { border: 2px dashed #fca5a5; background: #fef2f2; border-radius: var(--radius); padding: 14px; margin-top: 16px; }
-    .summary-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-    .summary-table th, .summary-table td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; }
-    .summary-table th { background: #f8fafc; font-weight: bold; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-slate { background: #e2e8f0; color: #1e293b; }
+    .btn-slate:hover { background: #cbd5e1; }
+    .btn-dark { background: #0f172a; color: white; }
+    .btn-dark:hover { background: #1e293b; }
+    
+    .nav-bar {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .folder-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    select, input[type="text"], input[type="date"], input[type="number"] {
+      padding: 7px 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 13px;
+      outline: none;
+      background: white;
+    }
+    select:focus, input:focus, textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(37,99,235,0.15);
+    }
+    .page-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    table.grid-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+      table-layout: fixed;
+    }
+    table.grid-table th {
+      background: #0f172a;
+      color: white;
+      padding: 10px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      text-align: left;
+    }
+    table.grid-table td {
+      border: 1px solid var(--border);
+      padding: 6px;
+      vertical-align: top;
+      background: white;
+    }
+    table.grid-table textarea {
+      width: 100%;
+      min-height: 80px;
+      min-width: 90px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 14px;
+      padding: 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      resize: both;
+      outline: none;
+      line-height: 1.4;
+      background: #fdfdfd;
+    }
+    .table-totals-row {
+      background: #f1f5f9;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-weight: 800;
+      font-size: 14px;
+    }
+    .table-totals-row td {
+      padding: 12px 8px;
+      border-top: 2px solid #cbd5e1;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 860px) {
+      .two-col { grid-template-columns: 1fr; }
+    }
+
+    .toggle-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      background: #f8fafc;
+      transition: all 0.15s ease;
+    }
+    .toggle-card.active {
+      background: #0f172a;
+      color: white;
+      border-color: #0f172a;
+    }
+    .toggle-card .subtext {
+      font-size: 11px;
+      opacity: 0.8;
+    }
+    .toggle-card .badge {
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: #10b981;
+      color: white;
+    }
+
+    /* Folder Page Totals Summary styling */
+    .summary-table-wrap {
+      max-height: 380px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: #fafafa;
+    }
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .summary-table th {
+      background: #1e293b;
+      color: white;
+      padding: 9px 12px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      font-size: 12px;
+      text-transform: uppercase;
+      text-align: left;
+    }
+    .summary-table tr {
+      cursor: pointer;
+      transition: background 0.15s ease;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .summary-table tr:hover { background: #e0f2fe !important; }
+    .summary-table tr.current-active-row {
+      background: #dbeafe !important;
+      font-weight: bold;
+    }
+    .summary-table td {
+      padding: 8px 12px;
+    }
+    .tag-sunday {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    .tag-bonus {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* Grand Total & Estimated Earning */
+    .grand-stitch-banner {
+      background: #0f172a;
+      color: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .grand-stitch-number {
+      font-size: 28px;
+      font-weight: 800;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #38bdf8;
+    }
+    .earning-card {
+      background: #f0f9ff;
+      border: 2px solid #bae6fd;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-top: 14px;
+    }
+    .earning-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #0c4a6e;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .earning-amount {
+      font-size: 26px;
+      font-weight: 900;
+      color: #0369a1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    .earning-breakdown {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #e0f2fe;
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.6;
+    }
+
+    /* Danger zone */
+    .danger-card {
+      background: #fff1f2;
+      border: 2px dashed #fca5a5;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-top: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f172a;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      z-index: 9999;
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="badge-live">● OFFLINE APK / PWA READY</span>
-      <span id="syncStatus">Auto-Saved</span>
+  <!-- Top Offline Status Banner -->
+  <div class="top-banner">
+    <div>
+      <span class="badge-dot"></span>
+      <strong>100% Offline Android Application</strong> &bull; Complete Embroidery Stitch Diary
     </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-primary" onclick="saveCurrentPage(true)">Save (Ctrl+S)</button>
-      <button class="btn btn-outline" style="color:white;border-color:#475569;background:#1e293b;" onclick="clearCurrentPage()">Clear Page</button>
+    <div style="font-size: 12px; opacity: 0.9;">
+      Data Saved Locally in Phone Storage &bull; No Internet Required
     </div>
   </div>
 
   <div class="container">
-    <!-- Folder Bar -->
-    <div class="card" style="padding:10px 14px;">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:bold;">SELECT FOLDER (1 to 12):</div>
-      <div class="folder-pills" id="folderButtons"></div>
+
+    <!-- Header -->
+    <header>
+      <div class="header-left">
+        <h1>🧵 Stitch Diary &amp; Number Grid</h1>
+        <p>40 Pages Multi-Folder Production, Bonus Manager &amp; Earnings Calculator</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-slate" onclick="exportBackup()">📥 Export Backup</button>
+        <button class="btn-slate" onclick="document.getElementById('importFile').click()">📤 Import</button>
+        <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importBackup(event)">
+        <button class="btn-dark" onclick="window.print()">🖨️ Print</button>
+      </div>
+    </header>
+
+    <!-- Navigation Bar: Folder & Page selection -->
+    <div class="nav-bar">
+      <div class="folder-select-wrap">
+        <label for="folderSelect" style="font-weight:bold; font-size:13px;">Active Folder:</label>
+        <select id="folderSelect" onchange="onFolderChange()">
+          <option value="Folder1">Folder 1</option>
+          <option value="Folder2">Folder 2</option>
+          <option value="Folder3">Folder 3</option>
+          <option value="Folder4">Folder 4</option>
+          <option value="Folder5">Folder 5</option>
+          <option value="Folder6">Folder 6</option>
+          <option value="Folder7">Folder 7</option>
+          <option value="Folder8">Folder 8</option>
+          <option value="Folder9">Folder 9</option>
+          <option value="Folder10">Folder 10</option>
+          <option value="Folder11">Folder 11</option>
+          <option value="Folder12">Folder 12</option>
+        </select>
+        <span id="savedIndicator" style="font-size:12px; color:#16a34a; font-weight:bold; margin-left:6px;">✓ Saved</span>
+      </div>
+
+      <div class="page-nav">
+        <button class="btn-slate" onclick="prevPage()">◀ Previous</button>
+        <span style="font-weight:bold; font-size:14px;">
+          Page <span id="pageDisplay" style="color:var(--primary); font-size:16px;">1</span> / 40
+        </span>
+        <button class="btn-slate" onclick="nextPage()">Next ▶</button>
+      </div>
     </div>
 
-    <!-- Page Header & Stats -->
+    <!-- Main Grid Entry Card -->
     <div class="card">
-      <div class="flex-row">
-        <div style="display:flex;align-items:center;gap:10px;">
-          <button class="btn btn-outline" onclick="prevPage()">◀ Prev</button>
-          <span style="font-size:16px;font-weight:bold;" id="pageIndicator">Page 1 / 40</span>
-          <button class="btn btn-outline" onclick="nextPage()">Next ▶</button>
-          <input type="number" id="jumpInput" min="1" max="40" style="width:60px;padding:5px;border:1px solid var(--border);border-radius:6px;" placeholder="Go #">
-          <button class="btn btn-outline" onclick="jumpToPage()">Go</button>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+        <div class="card-title" style="margin:0;">
+          📝 Shift Entry Grid &bull; <span id="currentFolderTitle" style="color:var(--primary);">Folder 1</span> - Page <span id="currentPageTitle">1</span>
         </div>
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-          <div>
-            <span style="font-size:12px;color:var(--muted);">Date:</span>
-            <input type="date" id="pageDate" style="padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;" onchange="saveCurrentPage()">
+        <div style="display:flex; gap:8px;">
+          <button class="btn-success" onclick="saveCurrentPage(true)">💾 Save Page</button>
+          <button class="btn-danger" onclick="clearCurrentPage()">🗑️ Clear</button>
+          <button id="undoBtn" class="btn-slate" style="display:none;" onclick="undoClear()">↩️ Undo</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="grid-table">
+          <colgroup>
+            <col style="width: 140px;">
+            <col style="width: 160px;">
+            <col style="width: 160px;">
+            <col style="width: 180px;">
+            <col style="width: 140px;">
+            <col style="width: 180px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Round</th>
+              <th>Current</th>
+              <th>Stitch</th>
+              <th>Color</th>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input type="date" id="pageDate" style="width:100%; font-weight:bold;" onchange="onDateChanged()">
+                <div id="sundayNotice" style="display:none; font-size:11px; color:#15803d; font-weight:bold; margin-top:4px;">
+                  ☀️ Sunday (+Rs 300)
+                </div>
+              </td>
+              <td><textarea id="col0" placeholder="e.g. 100&#10;50+" oninput="onInputData(0)"></textarea></td>
+              <td><textarea id="col1" placeholder="e.g. 250&#10;150-" oninput="onInputData(1)"></textarea></td>
+              <td><textarea id="col2" placeholder="e.g. 350000" oninput="onInputData(2)"></textarea></td>
+              <td><textarea id="col3" placeholder="Colors..." oninput="onInputData(3)"></textarea></td>
+              <td><textarea id="col4" placeholder="Worker / Design..." oninput="onInputData(4)"></textarea></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr class="table-totals-row">
+              <td>COLUMN TOTAL</td>
+              <td id="tot0">0</td>
+              <td id="tot1">0</td>
+              <td id="tot2" style="color:var(--primary);">0</td>
+              <td id="tot3">0</td>
+              <td id="tot4">0</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <div style="font-size:11px; color:var(--text-muted); margin-top:8px;">
+        💡 Tip: Numbers ending with <code>+</code> forward to next column. Numbers ending with <code>-</code> subtract from next column.
+      </div>
+    </div>
+
+    <!-- Two-Col: Shift Notes & Allowances -->
+    <div class="two-col">
+      <!-- Shift Note & Remarks -->
+      <div class="card">
+        <div class="card-title">📌 Shift Note &amp; Remarks</div>
+        <textarea id="pageNote" style="width:100%; height:90px; padding:10px; border-radius:8px; border:1px solid #cbd5e1; font-size:13px; resize:vertical;" placeholder="Write machine remarks, shift notes, handover details..." oninput="onNoteChanged()"></textarea>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:6px;">
+          Note is saved with this page and displayed in the Folder Totals Summary.
+        </div>
+      </div>
+
+      <!-- Allowances & Sunday Bonus -->
+      <div class="card">
+        <div class="card-title">🎁 Bonus &amp; Allowances</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+          <div id="helperCard" class="toggle-card" onclick="toggleHelper()">
+            <div>
+              <div style="font-weight:bold; font-size:13px;">Helper Allowance</div>
+              <div class="subtext">Rs 5,000</div>
+            </div>
+            <span id="helperBadge" class="badge" style="display:none;">Active</span>
           </div>
-          <div class="stat-badge stat-green" id="pageStitchStat">Page Stitches: 0</div>
-          <div class="stat-badge" id="dailyBonusStat">Daily Bonus: None</div>
+          <div id="hazriCard" class="toggle-card" onclick="toggleHazri()">
+            <div>
+              <div style="font-weight:bold; font-size:13px;">Hazri Bonus</div>
+              <div class="subtext">Rs 1,000</div>
+            </div>
+            <span id="hazriBadge" class="badge" style="display:none;">Active</span>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; background:#f8fafc; padding:10px 14px; border:1px solid var(--border); border-radius:10px;">
+          <div>
+            <div style="font-weight:bold; font-size:13px;">Page Sunday Shift Count</div>
+            <div style="font-size:11px; color:var(--text-muted);">Rs 300 per Sunday worked</div>
+          </div>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button class="btn-slate" style="padding:4px 10px;" onclick="adjustSunday(-1)">-</button>
+            <input type="number" id="pageSundays" value="0" min="0" style="width:50px; text-align:center; font-weight:bold;" onchange="onSundayInput()">
+            <button class="btn-slate" style="padding:4px 10px;" onclick="adjustSunday(1)">+</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- 5 Columns Main Grid -->
-    <div class="card" style="overflow-x:auto;">
-      <h3 style="font-size:15px;margin-bottom:8px;">5-Column Number Grid</h3>
-      <table class="grid-table" id="numberGrid">
-        <thead>
-          <tr>
-            <th style="width:60px;">#</th>
-            <th>Round</th>
-            <th>Current</th>
-            <th>Stitch</th>
-            <th>Color</th>
-            <th>Name</th>
-          </tr>
-        </thead>
-        <tbody id="gridBody"></tbody>
-        <tfoot>
-          <tr style="background:#f8fafc;font-weight:bold;">
-            <td style="padding:10px;">Total</td>
-            <td id="totRound">0</td>
-            <td id="totCurrent">0</td>
-            <td id="totStitch" style="color:var(--primary);font-size:16px;">0</td>
-            <td id="totColor">0</td>
-            <td style="font-size:12px;color:var(--muted);">Sum Total</td>
-          </tr>
-        </tfoot>
-      </table>
-    </div>
-
-    <!-- Shift Note & Remarks Card -->
-    <div class="card">
-      <h3 style="font-size:15px;margin-bottom:8px;">📝 Shift Note & Remarks</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div>
-          <label style="font-size:12px;color:var(--muted);font-weight:bold;">Shift Note:</label>
-          <input type="text" id="shiftNote" placeholder="e.g. Day shift, Head #2 issue..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;margin-top:4px;" oninput="saveCurrentPage()">
+    <!-- Folder Page Totals Summary -->
+    <div class="card" id="folderTotalsSummarySection">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+        <div class="card-title" style="margin:0;">
+          📊 Folder Page Totals Summary (<span id="summaryFolderLabel">Folder 1</span>)
         </div>
-        <div>
-          <label style="font-size:12px;color:var(--muted);font-weight:bold;">Remarks:</label>
-          <input type="text" id="remarks" placeholder="e.g. Completed order, sample ok..." style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;margin-top:4px;" oninput="saveCurrentPage()">
+        <div style="display:flex; gap:8px;">
+          <button class="btn-slate" onclick="toggleFilterActive()" id="filterToggleBtn">Filter: Show All 40</button>
+          <button class="btn-slate" onclick="copyReport()">📋 Copy Report</button>
         </div>
       </div>
-    </div>
 
-    <!-- Folder Totals Summary & Earning -->
-    <div class="card">
-      <div class="flex-row" style="margin-bottom:12px;">
-        <h3 style="font-size:16px;">📊 Folder Page Totals Summary (All 40 Pages)</h3>
-        <div style="display:flex;gap:8px;">
-          <div class="stat-badge" id="grandStitchTotal">Folder Stitches: 0</div>
-          <div class="stat-badge stat-green" id="estimatedEarnings">Estimated Earning: Rs 0</div>
-        </div>
-      </div>
-      <div style="max-height:280px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;">
+      <div class="summary-table-wrap">
         <table class="summary-table">
           <thead>
             <tr>
-              <th style="width:60px;">Page</th>
-              <th>Date</th>
-              <th>Shift Note</th>
-              <th>Remarks</th>
-              <th>Stitches</th>
-              <th>Bonus Tier</th>
+              <th style="width:70px;">Page #</th>
+              <th style="width:110px;">Date</th>
+              <th>Remarks / Note</th>
+              <th style="width:100px;">Sunday</th>
+              <th style="width:110px;">Bonus Tier</th>
+              <th style="width:130px; text-align:right;">Stitches</th>
             </tr>
           </thead>
-          <tbody id="summaryTableBody"></tbody>
+          <tbody id="summaryTableBody">
+            <!-- Dynamically populated 40 rows -->
+          </tbody>
         </table>
       </div>
-    </div>
 
-    <!-- Danger Zone Card -->
-    <div class="danger-box">
-      <div class="flex-row">
+      <!-- Grand Total Stitches Banner -->
+      <div class="grand-stitch-banner">
         <div>
-          <h4 style="color:var(--danger);font-size:15px;margin-bottom:4px;">⚠️ Danger Zone</h4>
-          <p style="font-size:12px;color:#991b1b;">Is folder ka mukammal data (tamam 40 pages) delete karne ke liye yeh button dabayen.</p>
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.5px; opacity:0.8;">📌 Total Stitch (<span id="grandFolderLabel">Folder 1</span>)</div>
+          <div class="grand-stitch-number" id="grandStitchTotal">0</div>
         </div>
-        <button class="btn btn-danger" onclick="deleteEntireFolder()">Delete Entire Folder</button>
+        <div style="text-align:right; font-size:13px;">
+          <div>Rate: <strong>Rs 270</strong> per 100k stitches</div>
+          <div style="font-size:11px; opacity:0.8; margin-top:4px;" id="activePagesCount">0 pages filled</div>
+        </div>
+      </div>
+
+      <!-- Estimated Earning Card -->
+      <div class="earning-card">
+        <div class="earning-title">
+          <span>💰 Estimated Earning (<span id="earningFolderLabel">Folder 1</span>):</span>
+          <span class="earning-amount" id="estimatedEarningTotal">Rs 0</span>
+        </div>
+        <div class="earning-breakdown" id="earningBreakdownText">
+          Breakdown: Rs 0 basic + Rs 0 bonus + Rs 0 sunday + Rs 0 allowances
+        </div>
       </div>
     </div>
+
+    <!-- Danger Zone: Folder Reset / Deletion -->
+    <div class="danger-card">
+      <div>
+        <div style="color:var(--danger); font-weight:800; font-size:15px;">⚠️ Danger Zone (Caution!)</div>
+        <div style="font-size:12px; color:#991b1b; margin-top:2px;">
+          Permanently clear all 40 pages of records for the active folder (<strong id="dangerFolderLabel">Folder 1</strong>).
+        </div>
+      </div>
+      <button class="btn-danger" onclick="deleteCurrentFolder()">🚨 Delete Full Current Folder</button>
+    </div>
+
   </div>
 
+  <div id="toast" class="toast">Action completed!</div>
+
   <script>
-    // Unregister any old stuck service workers immediately
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(registrations => {
-        for (let registration of registrations) {
-          registration.update();
-        }
-      });
-    }
-
-    let currentFolder = 1;
-    let currentPage = 1;
-    const TOTAL_FOLDERS = 12;
     const TOTAL_PAGES = 40;
-    const ROWS_COUNT = 15;
+    const RATE_PER_100K = 270;
+    const RATE_PER_STITCH = RATE_PER_100K / 100000;
+    const SUNDAY_RATE = 300;
+    const HELPER_BONUS = 5000;
+    const HAZRI_BONUS = 1000;
+    const TEN_MILLION_BONUS = 1000;
 
-    function initFolderButtons() {
-      const container = document.getElementById('folderButtons');
-      container.innerHTML = '';
-      for (let i = 1; i <= TOTAL_FOLDERS; i++) {
-        const btn = document.createElement('button');
-        btn.className = `f-btn ${i === currentFolder ? 'active' : ''}`;
-        btn.innerText = `Folder ${i}`;
-        btn.onclick = () => selectFolder(i);
-        container.appendChild(btn);
-      }
-    }
+    let currentFolder = localStorage.getItem('lastOpenedFolder') || 'Folder1';
+    let currentPage = parseInt(localStorage.getItem('lastOpenedPage') || '1', 10);
+    if (isNaN(currentPage) || currentPage < 1 || currentPage > TOTAL_PAGES) currentPage = 1;
 
-    function selectFolder(f) {
-      saveCurrentPage();
-      currentFolder = f;
-      initFolderButtons();
+    let helperBonusEnabled = localStorage.getItem('stitch_helperBonus') === 'true';
+    let hazriBonusEnabled = localStorage.getItem('stitch_hazriBonus') === 'true';
+    let showActiveOnly = false;
+    let lastClearedData = null;
+
+    // Load initial state
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('folderSelect').value = currentFolder;
+      updateBonusTogglesUI();
       loadPage(currentPage);
       updateFolderSummary();
+    });
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
-    function initGrid() {
-      const tbody = document.getElementById('gridBody');
-      tbody.innerHTML = '';
-      for (let i = 0; i < ROWS_COUNT; i++) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="color:var(--muted);font-weight:bold;">${i + 1}</td>
-          <td><input type="number" class="c-round" oninput="calculateRowTotals()"></td>
-          <td><input type="number" class="c-curr" oninput="calculateRowTotals()"></td>
-          <td><input type="number" class="c-stitch" oninput="calculateRowTotals()"></td>
-          <td><input type="number" class="c-color" oninput="calculateRowTotals()"></td>
-          <td><textarea class="c-name" rows="1" oninput="saveCurrentPage()"></textarea></td>
-        `;
-        tbody.appendChild(tr);
-      }
-    }
-
-    function calculateRowTotals() {
-      let tRound = 0, tCurr = 0, tStitch = 0, tColor = 0;
-      document.querySelectorAll('.c-round').forEach(el => tRound += Number(el.value) || 0);
-      document.querySelectorAll('.c-curr').forEach(el => tCurr += Number(el.value) || 0);
-      document.querySelectorAll('.c-stitch').forEach(el => tStitch += Number(el.value) || 0);
-      document.querySelectorAll('.c-color').forEach(el => tColor += Number(el.value) || 0);
-
-      document.getElementById('totRound').innerText = tRound.toLocaleString();
-      document.getElementById('totCurrent').innerText = tCurr.toLocaleString();
-      document.getElementById('totStitch').innerText = tStitch.toLocaleString();
-      document.getElementById('totColor').innerText = tColor.toLocaleString();
-      document.getElementById('pageStitchStat').innerText = `Page Stitches: ${tStitch.toLocaleString()}`;
-
-      // Daily Bonus Calculation
-      const bonusBadge = document.getElementById('dailyBonusStat');
-      if (tStitch >= 40000) {
-        bonusBadge.innerText = 'Daily Bonus: Tier 3 (Super)';
-      } else if (tStitch >= 25000) {
-        bonusBadge.innerText = 'Daily Bonus: Tier 2 (Good)';
-      } else if (tStitch >= 15000) {
-        bonusBadge.innerText = 'Daily Bonus: Tier 1';
-      } else {
-        bonusBadge.innerText = 'Daily Bonus: None';
-      }
-
-      saveCurrentPage();
+    function onFolderChange() {
+      saveCurrentPage(false);
+      currentFolder = document.getElementById('folderSelect').value;
+      localStorage.setItem('lastOpenedFolder', currentFolder);
+      currentPage = 1;
+      loadPage(1);
       updateFolderSummary();
-    }
-
-    function getStorageKey(folder, page) {
-      return `stitch_data_f${folder}_p${page}`;
-    }
-
-    function saveCurrentPage(showNotice = false) {
-      const rows = [];
-      const trs = document.querySelectorAll('#gridBody tr');
-      trs.forEach(tr => {
-        rows.push({
-          round: tr.querySelector('.c-round').value,
-          curr: tr.querySelector('.c-curr').value,
-          stitch: tr.querySelector('.c-stitch').value,
-          color: tr.querySelector('.c-color').value,
-          name: tr.querySelector('.c-name').value
-        });
-      });
-
-      const pageData = {
-        date: document.getElementById('pageDate').value,
-        shiftNote: document.getElementById('shiftNote').value,
-        remarks: document.getElementById('remarks').value,
-        rows: rows
-      };
-
-      localStorage.setItem(getStorageKey(currentFolder, currentPage), JSON.stringify(pageData));
-      document.getElementById('syncStatus').innerText = 'Auto-Saved at ' + new Date().toLocaleTimeString();
-      if (showNotice) alert('Page Data Saved Successfully!');
-    }
-
-    function loadPage(page) {
-      currentPage = page;
-      document.getElementById('pageIndicator').innerText = `Page ${currentPage} / ${TOTAL_PAGES}`;
-      const saved = localStorage.getItem(getStorageKey(currentFolder, currentPage));
-
-      const trs = document.querySelectorAll('#gridBody tr');
-      if (saved) {
-        const data = JSON.parse(saved);
-        document.getElementById('pageDate').value = data.date || '';
-        document.getElementById('shiftNote').value = data.shiftNote || '';
-        document.getElementById('remarks').value = data.remarks || '';
-        (data.rows || []).forEach((row, i) => {
-          if (trs[i]) {
-            trs[i].querySelector('.c-round').value = row.round || '';
-            trs[i].querySelector('.c-curr').value = row.curr || '';
-            trs[i].querySelector('.c-stitch').value = row.stitch || '';
-            trs[i].querySelector('.c-color').value = row.color || '';
-            trs[i].querySelector('.c-name').value = row.name || '';
-          }
-        });
-      } else {
-        document.getElementById('pageDate').value = new Date().toISOString().slice(0, 10);
-        document.getElementById('shiftNote').value = '';
-        document.getElementById('remarks').value = '';
-        trs.forEach(tr => {
-          tr.querySelectorAll('input, textarea').forEach(inp => inp.value = '');
-        });
-      }
-      calculateRowTotals();
     }
 
     function prevPage() {
       if (currentPage > 1) {
-        saveCurrentPage();
+        saveCurrentPage(false);
         loadPage(currentPage - 1);
       }
     }
 
     function nextPage() {
       if (currentPage < TOTAL_PAGES) {
-        saveCurrentPage();
+        saveCurrentPage(false);
         loadPage(currentPage + 1);
       }
     }
 
-    function jumpToPage() {
-      const val = parseInt(document.getElementById('jumpInput').value);
-      if (val >= 1 && val <= TOTAL_PAGES) {
-        saveCurrentPage();
-        loadPage(val);
+    function jumpToPage(p) {
+      if (p >= 1 && p <= TOTAL_PAGES) {
+        saveCurrentPage(false);
+        loadPage(p);
       }
+    }
+
+    function getStorageKey(fold, page) {
+      return fold + '_pageData_' + page;
+    }
+
+    function loadPage(p) {
+      currentPage = p;
+      localStorage.setItem('lastOpenedPage', String(p));
+      document.getElementById('pageDisplay').innerText = p;
+      document.getElementById('currentPageTitle').innerText = p;
+      document.getElementById('currentFolderTitle').innerText = currentFolder;
+
+      const raw = localStorage.getItem(getStorageKey(currentFolder, p));
+      let data = { date: '', values: ['', '', '', '', ''], note: '', sundays: 0 };
+      if (raw) {
+        try { data = JSON.parse(raw); } catch(e){}
+      }
+
+      document.getElementById('pageDate').value = data.date || '';
+      for (let i = 0; i < 5; i++) {
+        const el = document.getElementById('col' + i);
+        if (el) el.value = (data.values && data.values[i]) ? data.values[i] : '';
+      }
+      document.getElementById('pageNote').value = data.note || '';
+      document.getElementById('pageSundays').value = data.sundays || 0;
+
+      checkSundayDate(data.date);
+      calcGridTotals();
+      updateFolderSummary();
+    }
+
+    function saveCurrentPage(showNotice) {
+      const vals = [];
+      for (let i = 0; i < 5; i++) {
+        vals.push(document.getElementById('col' + i)?.value || '');
+      }
+      const data = {
+        date: document.getElementById('pageDate')?.value || '',
+        values: vals,
+        note: document.getElementById('pageNote')?.value || '',
+        sundays: parseInt(document.getElementById('pageSundays')?.value || '0', 10) || 0
+      };
+
+      localStorage.setItem(getStorageKey(currentFolder, currentPage), JSON.stringify(data));
+      document.getElementById('savedIndicator').style.opacity = '1';
+      if (showNotice) showToast(`Saved Page ${currentPage} (${currentFolder})`);
+      updateFolderSummary();
     }
 
     function clearCurrentPage() {
-      if (confirm('Kya aap is page ka sara data clear karna chahte hain?')) {
-        localStorage.removeItem(getStorageKey(currentFolder, currentPage));
-        loadPage(currentPage);
+      const vals = [];
+      for (let i = 0; i < 5; i++) vals.push(document.getElementById('col' + i)?.value || '');
+      lastClearedData = {
+        date: document.getElementById('pageDate')?.value || '',
+        values: vals,
+        note: document.getElementById('pageNote')?.value || '',
+        sundays: parseInt(document.getElementById('pageSundays')?.value || '0', 10) || 0
+      };
+
+      document.getElementById('undoBtn').style.display = 'inline-flex';
+      localStorage.removeItem(getStorageKey(currentFolder, currentPage));
+      loadPage(currentPage);
+      showToast(`Page ${currentPage} cleared. Click Undo to restore.`);
+    }
+
+    function undoClear() {
+      if (!lastClearedData) return;
+      localStorage.setItem(getStorageKey(currentFolder, currentPage), JSON.stringify(lastClearedData));
+      lastClearedData = null;
+      document.getElementById('undoBtn').style.display = 'none';
+      loadPage(currentPage);
+      showToast(`Page ${currentPage} restored!`);
+    }
+
+    function onInputData(colIdx) {
+      calcGridTotals();
+      debouncedAutoSave();
+    }
+
+    function onNoteChanged() {
+      debouncedAutoSave();
+    }
+
+    function onSundayInput() {
+      debouncedAutoSave();
+    }
+
+    function adjustSunday(delta) {
+      const el = document.getElementById('pageSundays');
+      let val = (parseInt(el.value, 10) || 0) + delta;
+      if (val < 0) val = 0;
+      el.value = val;
+      debouncedAutoSave();
+    }
+
+    let saveTimeout = null;
+    function debouncedAutoSave() {
+      document.getElementById('savedIndicator').style.opacity = '0.3';
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        saveCurrentPage(false);
+        document.getElementById('savedIndicator').style.opacity = '1';
+      }, 400);
+    }
+
+    function onDateChanged() {
+      const dt = document.getElementById('pageDate').value;
+      if (dt) {
+        try {
+          const parts = dt.split('-');
+          if (parts.length === 3) {
+            const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+            if (d.getDay() === 0) {
+              document.getElementById('pageSundays').value = 1;
+              document.getElementById('sundayNotice').style.display = 'block';
+            } else {
+              document.getElementById('sundayNotice').style.display = 'none';
+            }
+          }
+        } catch(e){}
+      } else {
+        document.getElementById('sundayNotice').style.display = 'none';
+      }
+      debouncedAutoSave();
+    }
+
+    function checkSundayDate(dt) {
+      if (!dt) {
+        document.getElementById('sundayNotice').style.display = 'none';
+        return;
+      }
+      try {
+        const parts = dt.split('-');
+        if (parts.length === 3) {
+          const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+          document.getElementById('sundayNotice').style.display = (d.getDay() === 0) ? 'block' : 'none';
+        }
+      } catch(e){
+        document.getElementById('sundayNotice').style.display = 'none';
       }
     }
 
+    function calcGridTotals() {
+      const cols = 5;
+      const totals = [0, 0, 0, 0, 0];
+      const subVals = [0, 0, 0, 0, 0];
+      const fwdVals = [0, 0, 0, 0, 0];
+
+      for (let j = 0; j < cols; j++) {
+        const valStr = document.getElementById('col' + j)?.value || '';
+        const lines = valStr.split('\n');
+        let sum = 0;
+        for (let line of lines) {
+          const v = line.trim();
+          if (!v || v.startsWith('+')) continue;
+          if (v.endsWith('+')) {
+            const num = parseFloat(v.slice(0, -1).trim()) || 0;
+            if (j < cols - 1) fwdVals[j + 1] += num;
+            continue;
+          }
+          if (v.endsWith('-')) {
+            const num = parseFloat(v.slice(0, -1).trim()) || 0;
+            subVals[j] += num;
+          } else {
+            sum += (parseFloat(v) || 0);
+          }
+        }
+        totals[j] += sum;
+      }
+
+      for (let i = 0; i < cols - 1; i++) {
+        totals[i + 1] += fwdVals[i + 1];
+        totals[i + 1] -= subVals[i];
+      }
+
+      for (let i = 0; i < cols; i++) {
+        const el = document.getElementById('tot' + i);
+        if (el) el.innerText = totals[i].toLocaleString();
+      }
+    }
+
+    function calculateSinglePageStitch(pageData) {
+      let stitchTotal = 0;
+      let fwd = 0;
+      let minus = 0;
+      if (pageData && pageData.values && pageData.values.length >= 3) {
+        const curLines = (pageData.values[1] || '').split('\n');
+        const stLines = (pageData.values[2] || '').split('\n');
+        for (let l of curLines) {
+          const t = l.trim();
+          if (t.endsWith('+')) fwd += parseFloat(t.slice(0,-1).trim()) || 0;
+          else if (t.endsWith('-')) minus += parseFloat(t.slice(0,-1).trim()) || 0;
+        }
+        for (let l of stLines) {
+          const t = l.trim();
+          if (!t || t.startsWith('+') || t.endsWith('+') || t.endsWith('-')) continue;
+          stitchTotal += parseFloat(t) || 0;
+        }
+        stitchTotal = stitchTotal + fwd - minus;
+      }
+      let bonusAmount = 0;
+      let bonusTier = 'none';
+      if (stitchTotal >= 400000) { bonusAmount = 200; bonusTier = '400k'; }
+      else if (stitchTotal >= 350000) { bonusAmount = 150; bonusTier = '350k'; }
+      return { stitchTotal, bonusAmount, bonusTier };
+    }
+
+    function toggleHelper() {
+      helperBonusEnabled = !helperBonusEnabled;
+      localStorage.setItem('stitch_helperBonus', String(helperBonusEnabled));
+      updateBonusTogglesUI();
+      updateFolderSummary();
+    }
+
+    function toggleHazri() {
+      hazriBonusEnabled = !hazriBonusEnabled;
+      localStorage.setItem('stitch_hazriBonus', String(hazriBonusEnabled));
+      updateBonusTogglesUI();
+      updateFolderSummary();
+    }
+
+    function updateBonusTogglesUI() {
+      const hCard = document.getElementById('helperCard');
+      const hBadge = document.getElementById('helperBadge');
+      if (helperBonusEnabled) {
+        hCard.classList.add('active');
+        hBadge.style.display = 'inline-block';
+      } else {
+        hCard.classList.remove('active');
+        hBadge.style.display = 'none';
+      }
+
+      const zCard = document.getElementById('hazriCard');
+      const zBadge = document.getElementById('hazriBadge');
+      if (hazriBonusEnabled) {
+        zCard.classList.add('active');
+        zBadge.style.display = 'inline-block';
+      } else {
+        zCard.classList.remove('active');
+        zBadge.style.display = 'none';
+      }
+    }
+
+    function toggleFilterActive() {
+      showActiveOnly = !showActiveOnly;
+      document.getElementById('filterToggleBtn').innerText = showActiveOnly ? 'Filter: Showing Active Only' : 'Filter: Show All 40';
+      updateFolderSummary();
+    }
+
     function updateFolderSummary() {
-      let grandStitches = 0;
+      document.getElementById('summaryFolderLabel').innerText = currentFolder;
+      document.getElementById('grandFolderLabel').innerText = currentFolder;
+      document.getElementById('earningFolderLabel').innerText = currentFolder;
+      document.getElementById('dangerFolderLabel').innerText = currentFolder;
+
+      let grandTotalStitches = 0;
+      let totalDailyBonus = 0;
+      let count350 = 0;
+      let count400 = 0;
+      let totalSundays = 0;
+      let activeCount = 0;
+
       const tbody = document.getElementById('summaryTableBody');
       tbody.innerHTML = '';
 
       for (let p = 1; p <= TOTAL_PAGES; p++) {
-        const raw = localStorage.getItem(getStorageKey(currentFolder, p));
-        let pStitch = 0;
-        let pDate = '-';
-        let pNote = '-';
-        let pRemarks = '-';
-
-        if (raw) {
-          const d = JSON.parse(raw);
-          pDate = d.date || '-';
-          pNote = d.shiftNote || '-';
-          pRemarks = d.remarks || '-';
-          (d.rows || []).forEach(r => pStitch += Number(r.stitch) || 0);
+        let pData = null;
+        if (p === currentPage) {
+          const vals = [];
+          for (let i = 0; i < 5; i++) vals.push(document.getElementById('col' + i)?.value || '');
+          pData = {
+            date: document.getElementById('pageDate')?.value || '',
+            values: vals,
+            note: document.getElementById('pageNote')?.value || '',
+            sundays: parseInt(document.getElementById('pageSundays')?.value || '0', 10) || 0
+          };
+        } else {
+          const raw = localStorage.getItem(getStorageKey(currentFolder, p));
+          if (raw) {
+            try { pData = JSON.parse(raw); } catch(e){}
+          }
         }
 
-        grandStitches += pStitch;
+        const { stitchTotal, bonusAmount, bonusTier } = calculateSinglePageStitch(pData);
+        const hasValues = pData && pData.values && pData.values.some(v => v && v.trim().length > 0);
+        const hasData = !!(hasValues || (pData && (pData.date || pData.note)));
 
-        let bonus = '-';
-        if (pStitch >= 40000) bonus = 'Tier 3';
-        else if (pStitch >= 25000) bonus = 'Tier 2';
-        else if (pStitch >= 15000) bonus = 'Tier 1';
+        if (hasData) {
+          activeCount++;
+          grandTotalStitches += stitchTotal;
+          totalDailyBonus += bonusAmount;
+          if (bonusTier === '400k') count400++;
+          else if (bonusTier === '350k') count350++;
+          totalSundays += (pData.sundays || 0);
+        }
 
-        const row = document.createElement('tr');
-        if (p === currentPage) row.style.background = '#e0f2fe';
-        row.innerHTML = `
-          <td><b>Page ${p}</b></td>
-          <td>${pDate}</td>
-          <td>${pNote}</td>
-          <td>${pRemarks}</td>
-          <td style="font-weight:bold;color:${pStitch > 0 ? 'var(--primary)' : 'inherit'}">${pStitch.toLocaleString()}</td>
-          <td>${bonus}</td>
+        if (showActiveOnly && !hasData) continue;
+
+        // Create table row
+        const tr = document.createElement('tr');
+        if (p === currentPage) tr.className = 'current-active-row';
+        tr.onclick = () => jumpToPage(p);
+
+        let sundayLabel = '-';
+        if (pData && pData.sundays > 0) {
+          sundayLabel = `<span class="tag-sunday">☀️ Sunday (${pData.sundays})</span>`;
+        }
+
+        let bonusBadge = '-';
+        if (bonusTier === '400k') {
+          bonusBadge = '<span class="tag-bonus">+Rs 200 (400k)</span>';
+        } else if (bonusTier === '350k') {
+          bonusBadge = '<span class="tag-bonus">+Rs 150 (350k)</span>';
+        }
+
+        tr.innerHTML = `
+          <td style="font-weight:bold; font-family:monospace;">P${p}</td>
+          <td>${(pData && pData.date) ? pData.date : '<span style="color:#94a3b8;">No date</span>'}</td>
+          <td style="color:#475569; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            ${(pData && pData.note) ? pData.note : '<span style="color:#cbd5e1;">-</span>'}
+          </td>
+          <td>${sundayLabel}</td>
+          <td>${bonusBadge}</td>
+          <td style="text-align:right; font-family:monospace; font-weight:bold; color:#0f172a;">
+            ${stitchTotal.toLocaleString()}
+          </td>
         `;
-        tbody.appendChild(row);
+        tbody.appendChild(tr);
       }
 
-      document.getElementById('grandStitchTotal').innerText = `Folder Stitches: ${grandStitches.toLocaleString()}`;
-      // Earning calculation (example: Rs 2.5 per 1,000 stitches)
-      const earning = Math.round((grandStitches / 1000) * 2.5);
-      document.getElementById('estimatedEarnings').innerText = `Estimated Earning: Rs ${earning.toLocaleString()}`;
+      // Calculations for Grand Total and Earnings
+      document.getElementById('grandStitchTotal').innerText = grandTotalStitches.toLocaleString();
+      document.getElementById('activePagesCount').innerText = `${activeCount} of 40 pages filled`;
+
+      const basicEarning = grandTotalStitches * RATE_PER_STITCH;
+      const sundayBonus = totalSundays * SUNDAY_RATE;
+      const tenMBonus = (grandTotalStitches >= 10000000) ? TEN_MILLION_BONUS : 0;
+      const helperBonusVal = helperBonusEnabled ? HELPER_BONUS : 0;
+      const hazriBonusVal = hazriBonusEnabled ? HAZRI_BONUS : 0;
+
+      const totalRs = Math.round(basicEarning + totalDailyBonus + tenMBonus + helperBonusVal + hazriBonusVal + sundayBonus);
+
+      document.getElementById('estimatedEarningTotal').innerText = 'Rs ' + totalRs.toLocaleString();
+
+      let breakdownStr = `<strong>Breakdown:</strong> Rs ${Math.round(basicEarning).toLocaleString()} basic`;
+      if (totalDailyBonus > 0) breakdownStr += ` + Rs ${totalDailyBonus.toLocaleString()} daily bonuses`;
+      if (count350 > 0) breakdownStr += ` (${count350} pgs &ge;350k)`;
+      if (count400 > 0) breakdownStr += ` (${count400} pgs &ge;400k)`;
+      if (tenMBonus > 0) breakdownStr += ` + Rs 1,000 for 10M milestone`;
+      if (sundayBonus > 0) breakdownStr += ` + Rs ${sundayBonus.toLocaleString()} for ${totalSundays} Sunday(s)`;
+      if (helperBonusVal > 0) breakdownStr += ` + Rs 5,000 helper`;
+      if (hazriBonusVal > 0) breakdownStr += ` + Rs 1,000 hazri`;
+
+      document.getElementById('earningBreakdownText').innerHTML = breakdownStr;
     }
 
-    function deleteEntireFolder() {
-      if (confirm(`DANGER: Kya aap Folder ${currentFolder} ke tamam 40 pages ka data delete karna chahte hain?`)) {
-        for (let p = 1; p <= TOTAL_PAGES; p++) {
-          localStorage.removeItem(getStorageKey(currentFolder, p));
+    function deleteCurrentFolder() {
+      const conf = confirm(`⚠️ Are you sure you want to PERMANENTLY ERASE all 40 pages of ${currentFolder}? This cannot be undone!`);
+      if (!conf) return;
+
+      for (let p = 1; p <= TOTAL_PAGES; p++) {
+        localStorage.removeItem(getStorageKey(currentFolder, p));
+      }
+      loadPage(1);
+      updateFolderSummary();
+      showToast(`Deleted all data for ${currentFolder}.`);
+    }
+
+    function copyReport() {
+      const grand = document.getElementById('grandStitchTotal').innerText;
+      const earning = document.getElementById('estimatedEarningTotal').innerText;
+      let text = `📋 ${currentFolder} Stitch Report\n`;
+      text += `Total Stitches: ${grand}\n`;
+      text += `Estimated Earnings: ${earning}\n`;
+      text += `Helper Allowance: ${helperBonusEnabled ? 'Rs 5,000' : 'Off'}\n`;
+      text += `Hazri Bonus: ${hazriBonusEnabled ? 'Rs 1,000' : 'Off'}\n`;
+      navigator.clipboard.writeText(text);
+      showToast('Summary copied to clipboard!');
+    }
+
+    function exportBackup() {
+      const dump = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.includes('_pageData_') || k.startsWith('stitch_') || k.startsWith('lastOpened'))) {
+          dump[k] = localStorage.getItem(k);
         }
-        loadPage(1);
-        updateFolderSummary();
-        alert(`Folder ${currentFolder} ka data mukammal delete ho gaya hay.`);
       }
+      const blob = new Blob([JSON.stringify(dump, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `stitch_diary_backup_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Backup downloaded successfully!');
     }
 
-    // Keyboard shortcut
+    function importBackup(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        try {
+          const parsed = JSON.parse(evt.target.result);
+          for (let k in parsed) {
+            localStorage.setItem(k, parsed[k]);
+          }
+          loadPage(currentPage);
+          updateFolderSummary();
+          showToast('Data restored successfully!');
+        } catch(err) {
+          alert('Invalid backup JSON file.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Keyboard shortcuts
     window.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
         saveCurrentPage(true);
+      } else if (e.altKey && e.key === 'ArrowLeft') {
+        e.preventDefault();
+        prevPage();
+      } else if (e.altKey && e.key === 'ArrowRight') {
+        e.preventDefault();
+        nextPage();
       }
     });
 
-    // Start
-    initFolderButtons();
-    initGrid();
-    loadPage(1);
+    // PWA Service Worker inline update & self-registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.getRegistrations().then(regs => {
+          for (let r of regs) r.update();
+        });
+      });
+    }
   </script>
 </body>
 </html>
